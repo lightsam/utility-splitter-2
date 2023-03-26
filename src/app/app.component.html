@@ -1,0 +1,142 @@
+<div style="text-align:center">
+  <h1>
+    Utilities
+  </h1>
+  <span *ngIf="!hideYears">Year:<input *ngIf="!hideYears" [(ngModel)]="year" size="4"/></span>
+</div>
+<div *ngFor="let person of people">
+  <div *ngIf="!person.isGuest ">
+    <div>{{person.name}}<span *ngIf="person.guests.length > 0"> and his guest(s)</span>'s portion is {{personWithGuestsTotalAmount(person).result.toFixed(2)}}</div>
+  </div>
+</div><p>Please correct me if I made any mistakes in the calculation.</p>
+<p>You can stop here if you are not interested in how I calculated your portion.</p>
+
+
+<p>{{people.length}} people/visits are involved.<button *ngIf="!hideButtons" (click)="addPerson()">Add a person</button></p>
+<div *ngFor="let person of people">
+  <input [(ngModel)]="person.name"/>
+  <input *ngIf="!hideButtons" type="checkbox" [checked]="person.stayAllDays" (change)="person.stayAllDays = !person.stayAllDays"/>
+  <span *ngIf="person.stayAllDays">stayed the whole period</span>
+  <span *ngIf="!person.stayAllDays">
+    <input [(ngModel)]="person.dateRange.startMonth" size="2"/>
+    /
+    <input [(ngModel)]="person.dateRange.startDay" size="2"/>
+    <span *ngIf="!hideYears">
+      /
+      <input [(ngModel)]="person.dateRange.startYear" size="4"/>
+    </span>
+    to
+    <input [(ngModel)]="person.dateRange.endMonth" size="2"/>
+    /
+    <input [(ngModel)]="person.dateRange.endDay" size="2"/>
+    <span *ngIf="!hideYears">
+      /
+      <input [(ngModel)]="person.dateRange.endYear" size="4"/>
+    </span>
+  </span>
+  <button *ngIf="!hideButtons" (click)="deletePerson(person.index)">Delete</button>
+  <button *ngIf="!hideButtons" (click)="addGuest(person)">Add Guest</button>
+</div>
+
+<p>A person's internet charge in a day should depend on the number of people in the house that day.</p>
+<div>
+  <input [(ngModel)]="internetCharge.name" size="50"/>,
+  <input [(ngModel)]="internetCharge.dateRange.startMonth" size="2"/>
+  /
+  <input [(ngModel)]="internetCharge.dateRange.startDay" size="2"/>
+  <span *ngIf="!hideYears">
+    /
+    <input [(ngModel)]="internetCharge.dateRange.startYear" size="4"/>
+  </span>
+  to
+  <input [(ngModel)]="internetCharge.dateRange.endMonth" size="2"/>
+  /
+  <input [(ngModel)]="internetCharge.dateRange.endDay" size="2"/>
+  <span *ngIf="!hideYears">
+    /
+    <input [(ngModel)]="internetCharge.dateRange.endYear" size="4"/>
+  </span>
+  $<input [(ngModel)]="internetCharge.amountStr" size="5"/>
+</div>
+<div>${{internetCharge.amountStr}} / {{internetCharge.dateRange.durationInDays()}} = ${{internetCharge.dailyRate().toFixed(2)}}</div>
+<!--7/15 - 7/30, there were five people (my mother and myself, Tony and his mother, yourself) in the house.-->
+<!--a should pay 0.97 / people * days + ... = 3.10-->
+<div *ngFor="let internetMap of internetCharge.internetMaps(people)">
+  {{internetMap.startMoment.format('M/D')}} - {{internetMap.endMoment.format('M/D')}}, {{internetMap.endMoment.diff(internetMap.startMoment, 'days') + 1}} days,
+  there were {{internetMap.people.length}} people ({{internetMap.peopleNameStr()}}) in the house.
+</div>
+<div *ngFor="let person of people">
+  {{person.name}}'s portion is {{internetCharge.personCharge(person).str}}
+</div>
+
+
+<p>For the following utilities, assume each person use the same amount in one day.</p>
+<div *ngFor="let charge of charges">
+  <div>
+    <input [(ngModel)]="charge.name" size="50"/>,
+    <input [(ngModel)]="charge.dateRange.startMonth" size="2"/>
+    /
+    <input [(ngModel)]="charge.dateRange.startDay" size="2"/>
+    <span *ngIf="!hideYears">
+      /
+      <input [(ngModel)]="charge.dateRange.startYear" size="4"/>
+    </span>
+    to
+    <input [(ngModel)]="charge.dateRange.endMonth" size="2"/>
+    /
+    <input [(ngModel)]="charge.dateRange.endDay" size="2"/>
+    <span *ngIf="!hideYears">
+      /
+      <input [(ngModel)]="charge.dateRange.endYear" size="4"/>
+    </span>
+    $<input [(ngModel)]="charge.amountStr" size="5"/>(<input type="text" placeholder="add note" size="40">)
+    <button *ngIf="!hideButtons" (click)="deleteCharge(charge.index)">Delete</button>
+  </div>
+  <div *ngFor="let person of people">
+    <div *ngIf="person.hasOverlap(charge)">{{person.name}} {{person.overlapString(charge)}}, {{person.overlapInDays(charge)}} days</div>
+  </div>
+  <div>Total days {{totalDays(charge)}}</div>
+  <div *ngFor="let person of people">
+    <div *ngIf="person.hasOverlap(charge)">{{person.name}}'s portion is {{charge.amountStr}} / {{totalDays(charge)}} * {{person.overlapInDays(charge)}} = {{person.payForCharge(charge, totalDays(charge)).toFixed(2)}}</div>
+  </div>
+  <br>
+</div>
+<button *ngIf="!hideButtons" (click)="addCharge(electricDeliveryStr)">Add {{electricDeliveryStr}}</button>
+<button *ngIf="!hideButtons" (click)="addCharge(siliconValleyCleanEnergyStr)">Add {{siliconValleyCleanEnergyStr}}</button>
+<button *ngIf="!hideButtons" (click)="addCharge(gasStr)">Add {{gasStr}}</button>
+<button *ngIf="!hideButtons" (click)="addCharge(waterStr)">Add {{waterStr}}</button>
+<button *ngIf="!hideButtons" (click)="addCharge(sewerGargageStr)">Add {{sewerGargageStr}}</button>
+
+
+<p>We also got credit.</p>
+<p>Electric Delivery Climate Credit. The credit is received twice a year, in Aprils and Octobers.
+  See www.cpuc.ca.gov/climatecredit.
+  In April 2022, credit is {{electricCredit.amountStr}}.
+  In October 2022, credit is {{electricCredit.amountStr}}.
+  I'm distributing the credit to each day. The more a person pays the bill, the more the person gets the credit.
+</p>
+<div *ngFor="let person of people">
+  {{person.name}} {{personElectricCredit(person).str}}
+</div>
+<p>Gas Climate Credit {{gasCredit.amountStr}}. The credit is received once a year, in Aprils. See www.cpuc.ca.gov/climatecredit.
+  I'm distributing the credit to each day. The more one pays the bill, the more he gets the credit.
+</p>
+<div *ngFor="let person of people">
+  {{person.name}} {{personGasCredit(person).str}}
+</div>
+
+<p>Now sum the numbers up.</p>
+<div *ngFor="let person of people">
+  <div *ngIf="!person.isGuest">
+    <div>{{person.name}}'s portion is {{personTotalAmount(person).str}}</div>
+    <div *ngFor="let guest of person.guests">{{guest.name}}'s portion is {{personTotalAmount(guest).str}}</div>
+    <div *ngIf="person.guests.length > 0">{{person.name}}<span *ngIf="person.guests.length > 0"> and his guest(s)</span>'s portion is {{personWithGuestsTotalAmount(person).str}}</div>
+  </div>
+</div>
+
+<div>
+  <input type="checkbox" [checked]="hideButtons" (change)="hideButtons = !hideButtons"/>Hide buttons
+  <input type="checkbox" [checked]="hideYears" (change)="hideYears = !hideYears"/>Hide years
+</div>
+
+
