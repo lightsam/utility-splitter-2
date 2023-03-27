@@ -25,7 +25,21 @@ typescript                      4.9.5
 ## Development server
 Run `nvm use 18.15.0`
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+Run `ng serve --open` for a dev server and open `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+
+## Deploy to Github
+
+https://angular.io/guide/deployment
+
+`ng build --prod --output-path docs --base-href /utility-splitter-2/`
+
+When the build is complete, make a copy of docs/index.html and name it docs/404.html.
+
+Remember to do git status and git add the untracked files.
+
+Commit change and push.
+
+The deployed page will be at https://lightsam.github.io/utility-splitter-2/
 
 ## Troubleshooting
 To resolve `Can't resolve 'moment' in '/Users/yliu/utility-splitter/src/app`, Run `npm install moment --save`
