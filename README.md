@@ -31,7 +31,7 @@ Run `ng serve --open` for a dev server and open `http://localhost:4200/`. The ap
 
 https://angular.io/guide/deployment
 
-`ng build --prod --output-path docs --base-href /utility-splitter-2/`
+`ng build --output-path docs --base-href /utility-splitter-2/`
 
 When the build is complete, make a copy of docs/index.html and name it docs/404.html.
 
