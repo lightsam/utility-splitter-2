@@ -1,6 +1,6 @@
 <div style="text-align:center">
   <h1>
-    Utilities
+    Utility Costs
   </h1>
   <span *ngIf="!hideYears">Year:<input *ngIf="!hideYears" [(ngModel)]="year" size="4"/></span>
 </div>
@@ -109,17 +109,17 @@
 
 
 <p>We also got credit.</p>
-<p>Electric Delivery Climate Credit. The credit is received twice a year, in Aprils and Octobers.
+<p>Electric Delivery Climate Credit. This credit is distributed twice a year.
   See www.cpuc.ca.gov/climatecredit.
-  In April 2022, credit is {{electricCredit.amountStr}}.
-  In October 2022, credit is {{electricCredit.amountStr}}.
-  I'm distributing the credit to each day. The more a person pays the bill, the more the person gets the credit.
+  In <input type="text" value="March 2023">, credit is <input [(ngModel)]="electricCredit.amountStr"/>.
+  In <input type="text" value="October 2023">, credit is {{electricCredit.amountStr}}.
+  I'm distributing the credit to each day. The more a person pays the bill, the more the credit person gets.
 </p>
 <div *ngFor="let person of people">
   {{person.name}} {{personElectricCredit(person).str}}
 </div>
-<p>Gas Climate Credit {{gasCredit.amountStr}}. The credit is received once a year, in Aprils. See www.cpuc.ca.gov/climatecredit.
-  I'm distributing the credit to each day. The more one pays the bill, the more he gets the credit.
+<p>Gas Climate Credit <input [(ngModel)]="gasCredit.amountStr"/>. The credit is distributed once a year. See www.cpuc.ca.gov/climatecredit.
+  I'm distributing the credit to each day. The more a person pays the bill, the more credit the person gets.
 </p>
 <div *ngFor="let person of people">
   {{person.name}} {{personGasCredit(person).str}}

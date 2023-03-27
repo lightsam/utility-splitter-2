@@ -1,3 +1,4 @@
+import * as moment from 'moment';
 import { Component } from '@angular/core';
 import { Charge } from './charge';
 import { Equation } from './equation';
@@ -20,16 +21,16 @@ export class AppComponent {
   gasCreditStr = 'Gas Climate Credit';
   hideButtons = false;
   hideYears = false;
-  year = 2022;
+  year = moment().year();
   people: Person[] = [
     new Person(0, this.year, 'Yutao')
   ];
-  internetCharge = new InternetCharge(0, this.year, this.internetStr, '30.00');
+  internetCharge = new InternetCharge(0, this.year, this.internetStr, '19.99');
   charges: Charge[] = [
     new Charge(0, this.year, this.electricDeliveryStr, '')
   ];
-  electricCredit: Charge = new Charge(0, this.year, this.electricCreditStr, '-39.30');
-  gasCredit: Charge = new Charge(0, this.year, this.gasCreditStr, '-47.83');
+  electricCredit: Charge = new Charge(0, this.year, this.electricCreditStr, '-38.39');
+  gasCredit: Charge = new Charge(0, this.year, this.gasCreditStr, '-52.78');
 
   public addPerson(): void {
     this.people.push(new Person(this.people.length, this.year, ''));
